@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist วิทยานิพนธ์ — คณะวิศวกรรมศาสตร์</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F3EE; --surface: #FEFCF8; --border: #D6D0C4; --border-light: #E8E4DB;
+    --text: #1A1714; --text-muted: #7A7469; --text-faint: #B0A99E;
+    --accent: #1B4F8A; --accent-mid: #4A7FC1;
+    --success: #1D6B3A; --success-bg: #EAF4EE;
+    --font: 'IBM Plex Sans Thai', sans-serif; --mono: 'IBM Plex Mono', monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; line-height: 1.6; }
+
+  /* Header */
+  header { background: var(--text); color: #fff; padding: 2.5rem 2rem 2rem; position: relative; overflow: hidden; }
+  header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 200px; height: 200px; border: 40px solid rgba(255,255,255,0.04); border-radius: 50%; }
+  .header-inner { max-width: 760px; margin: 0 auto; position: relative; z-index: 1; }
+  .header-tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 0.75rem; }
+  header h1 { font-size: clamp(20px, 4vw, 26px); font-weight: 600; line-height: 1.3; margin-bottom: 0.4rem; }
+  header p { font-size: 13px; color: rgba(255,255,255,0.5); }
+
+  /* Login */
+  .login-wrap { max-width: 460px; margin: 3rem auto; padding: 2rem; background: var(--surface); border-radius: 12px; border: 1px solid var(--border-light); }
+  .login-wrap h2 { font-size: 16px; font-weight: 600; margin-bottom: 0.4rem; }
+  .login-wrap p { font-size: 13px; color: var(--text-muted); margin-bottom: 1.5rem; }
+  .field { margin-bottom: 1rem; }
+  .field label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; }
+  .field input { width: 100%; font-family: var(--font); font-size: 14px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 7px; background: var(--bg); color: var(--text); outline: none; transition: border-color 0.2s; }
+  .field input:focus { border-color: var(--accent); }
+  .btn-login { width: 100%; font-family: var(--font); font-size: 14px; font-weight: 500; padding: 11px; border-radius: 7px; border: none; background: var(--accent); color: #fff; cursor: pointer; margin-top: 0.5rem; transition: background 0.15s; }
+  .btn-login:hover { background: #163f70; }
+  .btn-login:disabled { background: var(--border); cursor: not-allowed; }
+  .login-msg { font-size: 12px; color: #991B1B; margin-top: 8px; min-height: 18px; text-align: center; }
+
+  /* User bar */
+  .user-bar { background: var(--surface); border-bottom: 1px solid var(--border-light); padding: 0.7rem 2rem; }
+  .user-bar-inner { max-width: 760px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+  .user-info { font-size: 13px; color: var(--text-muted); }
+  .user-info strong { color: var(--text); }
+  .btn-logout { font-family: var(--font); font-size: 12px; padding: 5px 12px; border-radius: 5px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; transition: all 0.15s; }
+  .btn-logout:hover { border-color: var(--text-muted); color: var(--text); }
+
+  /* Progress */
+  .progress-wrap { background: var(--surface); border-bottom: 1px solid var(--border-light); padding: 1rem 2rem; position: sticky; top: 0; z-index: 100; }
+  .progress-inner { max-width: 760px; margin: 0 auto; }
+  .progress-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .progress-label { font-size: 12px; color: var(--text-muted); font-weight: 500; }
+  .progress-count { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--accent); }
+  .progress-track { height: 4px; background: var(--border-light); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent-mid)); border-radius: 4px; transition: width 0.4s cubic-bezier(0.4,0,0.2,1); width: 0%; }
+
+  /* Main */
+  main { max-width: 760px; margin: 0 auto; padding: 2rem; }
+  .toolbar { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 1.5rem; align-items: center; }
+  .save-status { font-size: 12px; color: var(--text-faint); margin-right: auto; }
+  .btn { font-family: var(--font); font-size: 13px; font-weight: 500; padding: 8px 18px; border-radius: 7px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 7px; }
+  .btn:hover { background: var(--bg); border-color: var(--text-muted); }
+  .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-primary:hover { background: #163f70; }
+  .btn svg { width: 15px; height: 15px; }
+
+  /* Sections */
+  .section { margin-bottom: 2.5rem; }
+  .section-head { display: flex; align-items: center; gap: 10px; margin-bottom: 1rem; padding-bottom: 10px; border-bottom: 1px solid var(--border-light); }
+  .section-head h2 { font-size: 15px; font-weight: 600; color: var(--text); }
+  .subsection { margin-bottom: 1.5rem; }
+  .subsection-head { display: flex; align-items: center; gap: 8px; margin-bottom: 0.6rem; padding: 6px 0; }
+  .subsection-head h3 { font-size: 13px; font-weight: 600; color: var(--text-muted); }
+  .badge { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; padding: 3px 9px; border-radius: 4px; font-weight: 500; text-transform: uppercase; white-space: nowrap; }
+  .badge-1 { background: #E8EFF8; color: #1B4F8A; }
+  .badge-2 { background: #EDE9FE; color: #5B21B6; }
+  .badge-3 { background: #FEE2E2; color: #991B1B; }
+  .badge-4 { background: #FEF3E2; color: #7A4A00; }
+  .badge-5 { background: #EAF4EE; color: #1D6B3A; }
+  .badge-sub { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border-light); font-size: 10px; }
+
+  /* Items */
+  .items { display: flex; flex-direction: column; gap: 3px; }
+  .item { display: flex; align-items: flex-start; gap: 12px; padding: 11px 14px; border-radius: 8px; cursor: pointer; transition: background 0.15s; border: 1px solid transparent; user-select: none; }
+  .item:hover { background: var(--surface); border-color: var(--border-light); }
+  .item.done { background: #EAF4EE; border-color: #C5E0CE; }
+  .cb { width: 19px; height: 19px; border-radius: 5px; border: 1.5px solid var(--border); flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; background: var(--surface); }
+  .item.done .cb { background: var(--success); border-color: var(--success); }
+  .item-body { flex: 1; min-width: 0; }
+  .item-text { font-size: 14px; color: var(--text); line-height: 1.5; }
+  .item.done .item-text { color: var(--success); text-decoration: line-through; text-decoration-color: #7ABF98; }
+  .item-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+  .item.done .item-sub { color: #7ABF98; }
+
+  footer { text-align: center; padding: 2rem; font-size: 12px; color: var(--text-faint); border-top: 1px solid var(--border-light); max-width: 760px; margin: 0 auto; }
+  .hidden { display: none !important; }
+
+  @media print {
+    header { background: #000 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .progress-wrap, .toolbar, .user-bar { display: none !important; }
+    .item.done { background: #EAF4EE !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { font-size: 13px; }
+    .item { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-tag">คณะวิศวกรรมศาสตร์ · บัณฑิตศึกษา</div>
+    <h1>Checklist ขั้นตอนการขอสำเร็จการศึกษา</h1>
+    <p>วิทยานิพนธ์ระดับบัณฑิตศึกษา · ครบทุกขั้นตอนก่อนและหลังการสอบ</p>
+  </div>
+</header>
+
+<!-- Login -->
+<div id="login-screen" style="padding:2rem;">
+  <div class="login-wrap">
+    <h2>เข้าสู่ระบบ</h2>
+    <p>กรอกข้อมูลเพื่อบันทึกและเรียกคืนความคืบหน้าของคุณ</p>
+    <div class="field">
+      <label>ชื่อ-นามสกุล</label>
+      <input type="text" id="inp-name" placeholder="เช่น สมชาย ใจดี" maxlength="80">
+    </div>
+    <div class="field">
+      <label>รหัสนักศึกษา</label>
+      <input type="text" id="inp-id" placeholder="เช่น 64xxxxxxx" maxlength="20">
+    </div>
+    <button class="btn-login" onclick="enterChecklist()">เข้าใช้งาน →</button>
+    <div class="login-msg" id="login-msg"></div>
+  </div>
+</div>
+
+<!-- Checklist -->
+<div id="checklist-screen" class="hidden">
+  <div class="user-bar">
+    <div class="user-bar-inner">
+      <div class="user-info"><strong id="disp-name"></strong> &nbsp;·&nbsp; <span id="disp-id" style="font-family:var(--mono);font-size:12px;"></span></div>
+      <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-inner">
+      <div class="progress-top">
+        <span class="progress-label">ความคืบหน้าโดยรวม</span>
+        <span class="progress-count" id="prog-text">0 / 0</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+    </div>
+  </div>
+
+  <main>
+    <div class="toolbar">
+      <span class="save-status" id="save-status">✓ บันทึกแล้ว</span>
+      <button class="btn btn-primary" onclick="window.print()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        พิมพ์ / PDF
+      </button>
+    </div>
+
+    <!-- ขั้นตอนที่ 1 -->
+    <div class="section">
+      <div class="section-head"><span class="badge badge-1">ขั้นตอนที่ 1</span><h2>การเตรียมสอบและยื่นขอสอบ</h2></div>
+      <div class="items" id="s1-items"></div>
+    </div>
+
+    <!-- ขั้นตอนที่ 2 -->
+    <div class="section">
+      <div class="section-head"><span class="badge badge-2">ขั้นตอนที่ 2</span><h2>การส่งเล่มวิทยานิพนธ์ก่อนสอบ</h2></div>
+      <div class="items" id="s2-items"></div>
+    </div>
+
+    <!-- ขั้นตอนที่ 3 -->
+    <div class="section">
+      <div class="section-head"><span class="badge badge-3">ขั้นตอนที่ 3</span><h2>การเตรียมการในวันสอบวิทยานิพนธ์</h2></div>
+      <div class="items" id="s3-items"></div>
+    </div>
+
+    <!-- ขั้นตอนที่ 4 -->
+    <div class="section">
+      <div class="section-head"><span class="badge badge-4">ขั้นตอนที่ 4</span><h2>การดำเนินการภายหลังการสอบและการแก้ไขวิทยานิพนธ์</h2></div>
+      <div class="items" id="s4-items"></div>
+    </div>
+
+    <!-- ขั้นตอนที่ 5 -->
+    <div class="section">
+      <div class="section-head"><span class="badge badge-5">ขั้นตอนที่ 5</span><h2>การตรวจรับและอนุมัติวิทยานิพนธ์ฉบับสมบูรณ์</h2></div>
+
+      <div class="subsection">
+        <div class="subsection-head"><span class="badge badge-sub">5.1</span><h3>ตรวจรับรูปเล่มวิทยานิพนธ์</h3></div>
+        <div class="items" id="s5a-items"></div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-head"><span class="badge badge-sub">5.2</span><h3>จัดเตรียมเอกสารสำเร็จการศึกษา</h3></div>
+        <div class="items" id="s5b-items"></div>
+      </div>
+
+      <div class="subsection">
+        <div class="subsection-head"><span class="badge badge-sub">5.3</span><h3>ขออนุมัติสำเร็จการศึกษาและส่งเล่มฉบับสมบูรณ์</h3></div>
+        <div class="items" id="s5c-items"></div>
+      </div>
+    </div>
+  </main>
+  <footer>Checklist วิทยานิพนธ์ คณะวิศวกรรมศาสตร์ · ข้อมูลบันทึกตามรหัสนักศึกษา</footer>
+</div>
+
+<script>
+const DATA = {
+  s1: [
+    {id:'s1_1', t:'จัดทำและยื่นแบบฟอร์ม วศ.1', s:'ระบุวัน เวลา และสถานที่สอบให้ชัดเจน'},
+    {id:'s1_2', t:'ชำระค่าธรรมเนียมการสอบวิทยานิพนธ์'},
+    {id:'s1_3', t:'ส่งเอกสาร บ.2 และ บ.2-1'},
+    {id:'s1_4', t:'ขอหนังสือเชิญกรรมการสอบจากภาควิชา'},
+    {id:'s1_5', t:'ประสานงานเรื่องที่จอดรถสำหรับกรรมการสอบ'},
+    {id:'s1_6', t:'ตรวจสอบการจองห้องสอบและความพร้อมของสถานที่สอบ'},
+  ],
+  s2: [
+    {id:'s2_1', t:'อาจารย์ที่ปรึกษาตรวจสอบความถูกต้องและความสมบูรณ์ของวิทยานิพนธ์'},
+    {id:'s2_2', t:'ส่งเล่มวิทยานิพนธ์ให้คณะกรรมการสอบล่วงหน้า', s:'อย่างน้อย 2 สัปดาห์ก่อนวันสอบ'},
+  ],
+  s3: [
+    {id:'s3_1', t:'จัดเตรียมเอกสารประกอบการสอบและเอกสารที่เกี่ยวข้องให้ครบถ้วน'},
+    {id:'s3_2', t:'จัดพิมพ์สไลด์นำเสนอสำหรับคณะกรรมการสอบ', s:'หรือจัดส่งไฟล์สไลด์ทาง E-mail ให้คณะกรรมการล่วงหน้า'},
+    {id:'s3_3', t:'ตรวจสอบความพร้อมของห้องสอบ อุปกรณ์คอมพิวเตอร์ และระบบนำเสนอ'},
+    {id:'s3_4', t:'เข้าสอบวิทยานิพนธ์ตามวัน เวลา และสถานที่ที่กำหนด'},
+  ],
+  s4: [
+    {id:'s4_1', t:'ตรวจสอบความถูกต้องและความครบถ้วนของเอกสาร บ.3', s:'ดำเนินการร่วมกับเจ้าหน้าที่ภาควิชา'},
+    {id:'s4_2', t:'รวบรวมข้อซักถาม ข้อเสนอแนะ และข้อแก้ไขจากคณะกรรมการสอบ', s:'เพื่อจัดส่งให้คณะกรรมการพิจารณาอนุมัติในรอบแรก'},
+    {id:'s4_3', t:'จัดทำสรุปผลการแก้ไขตามข้อเสนอแนะของคณะกรรมการสอบ'},
+    {id:'s4_4', t:'ดำเนินการแก้ไขวิทยานิพนธ์ตามข้อเสนอแนะที่ได้รับ'},
+    {id:'s4_5', t:'ส่งวิทยานิพนธ์ฉบับแก้ไขสมบูรณ์พร้อมเอกสารประกอบ', s:'เพื่อขออนุมัติจากคณะกรรมการสอบ'},
+  ],
+  s5a: [
+    {id:'s5a_1', t:'ภาควิชาตรวจสอบรูปเล่มวิทยานิพนธ์ฉบับสมบูรณ์'},
+    {id:'s5a_2', t:'ตรวจสอบชื่อวิทยานิพนธ์และบทคัดย่อ (ไทย/อังกฤษ)', s:'โดยผู้ตรวจทานที่คณะฯ แต่งตั้ง — ไม่ใช่อาจารย์ที่ปรึกษา'},
+    {id:'s5a_3', t:'อาจารย์ที่ปรึกษาลงนามรับรองหลังตรวจสอบอย่างรอบคอบ'},
+    {id:'s5a_4', t:'ภาควิชารับเล่มวิทยานิพนธ์ที่ผ่านการตรวจสอบ'},
+  ],
+  s5b: [
+    {id:'s5b_1', t:'แบบ บ-3', s:'ตรวจชื่อวิทยานิพนธ์และรายชื่อกรรมการให้ตรงกับเล่มและระบบ New ACIS'},
+    {id:'s5b_2', t:'แบบ GS-100 รับรองการตรวจรูปแบบวิทยานิพนธ์', s:'นักศึกษาและอาจารย์ที่ปรึกษาลงนาม'},
+    {id:'s5b_3', t:'แบบ GS-103 การตรวจสอบการคัดลอก (Plagiarism)', s:'นักศึกษาและอาจารย์ที่ปรึกษาลงนาม'},
+    {id:'s5b_4', t:'ใบโอนลิขสิทธิ์', s:'ลายมือชื่อนักศึกษา / อาจารย์ที่ปรึกษา / หัวหน้าภาควิชา'},
+    {id:'s5b_5', t:'เอกสารการเผยแพร่ผลงานวิชาการครบตามเงื่อนไข', s:'ป.เอก: แนบผลตีพิมพ์วารสารนานาชาติ (WoS/Scopus) พร้อมตรวจ Quartile'},
+    {id:'s5b_6', t:'เอกสารตรวจสอบการยืมหนังสือจากสำนักหอสมุด (วศ.5)'},
+    {id:'s5b_7', t:'หลักฐานผ่านการสอบวัดคุณสมบัติ QE — เฉพาะนักศึกษาปริญญาเอก', s:'แนบผลสอบ'},
+    {id:'s5b_8', t:'หลักฐานผ่านการสอบประมวลความรู้ Comprehensive — เฉพาะป.โท แผน ข', s:'แนบผลสอบ'},
+    {id:'s5b_9', t:'กรอกข้อมูลการเผยแพร่ผลงานในระบบ New ACIS (ถ้ามี)'},
+    {id:'s5b_10', t:'หลักฐานการเรียนครบตามโครงสร้างหลักสูตร', s:'พิมพ์รายงานจากระบบ New ACIS แนบ'},
+    {id:'s5b_11', t:'หลักฐานผลสอบภาษาอังกฤษ', s:'LNG550/LNG600 หรือเทียบเท่า พร้อมระบุระดับคะแนนและวันที่'},
+    {id:'s5b_12', t:'หลักฐานการอบรมจริยธรรมการวิจัย', s:'แนบใบรับรองการอบรม'},
+    {id:'s5b_13', t:'สำเนา วศ.1 ที่ได้รับการอนุมัติจากคณะฯ', s:'พร้อมบันทึกรายชื่อกรรมการในระบบ New ACIS'},
+    {id:'s5b_14', t:'แบบฟอร์มขอปกปิดวิทยานิพนธ์ (ถ้ามี)', s:'เฉพาะกรณีที่ต้องการปกปิด — อาจารย์ที่ปรึกษาและหัวหน้าภาคลงนาม'},
+    {id:'s5b_15', t:'เอกสารเงื่อนไขทุนการศึกษา (ถ้ามี)', s:'เฉพาะผู้รับทุนเพชรพระจอมเกล้าฯ — แนบเอกสารปิดทุน'},
+    {id:'s5b_16', t:'เอกสารทำบันทึกขออนุมัติเฉพาะผลสอบ (กรณีผลงาน/ผลสอบภาษาอังกฤษยังไม่ครบ)'},
+  ],
+  s5c: [
+    {id:'s5c_1', t:'ภาควิชาตรวจสอบความครบถ้วนของเอกสารทั้งหมด'},
+    {id:'s5c_2', t:'ดำเนินการขอรับลายมือชื่ออนุมัติจากผู้เกี่ยวข้องตามระเบียบมหาวิทยาลัย'},
+    {id:'s5c_3', t:'กรณีมีเงื่อนไขค้าง (ผลงานตีพิมพ์/ภาษาอังกฤษ) ดำเนินการส่งเอกสารเพิ่มเติม'},
+    {id:'s5c_4', t:'ภาควิชานำเรื่องขออนุมัติสำเร็จการศึกษา'},
+    {id:'s5c_5', t:'ส่งวิทยานิพนธ์ฉบับสมบูรณ์ตามขั้นตอนของบัณฑิตวิทยาลัย'},
+  ],
+};
+
+let currentUser = null;
+let state = {};
+const CHECK_SVG = `<svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>`;
+
+function storageKey(id) { return 'thesis_v4_' + id.trim().toLowerCase(); }
+
+function enterChecklist() {
+  const name = document.getElementById('inp-name').value.trim();
+  const stdId = document.getElementById('inp-id').value.trim();
+  const msg = document.getElementById('login-msg');
+  if (!name || !stdId) { msg.textContent = 'กรุณากรอกชื่อและรหัสนักศึกษา'; return; }
+  msg.textContent = '';
+  try { state = JSON.parse(localStorage.getItem(storageKey(stdId)) || '{}'); } catch(e) { state = {}; }
+  currentUser = { name, stdId };
+  document.getElementById('disp-name').textContent = name;
+  document.getElementById('disp-id').textContent = stdId;
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('checklist-screen').classList.remove('hidden');
+  renderAll();
+}
+
+function saveState() {
+  if (!currentUser) return;
+  try { localStorage.setItem(storageKey(currentUser.stdId), JSON.stringify(state)); } catch(e) {}
+  const el = document.getElementById('save-status');
+  el.textContent = '✓ บันทึกแล้ว';
+  el.style.color = 'var(--success)';
+  setTimeout(() => { el.style.color = 'var(--text-faint)'; }, 1500);
+}
+
+function logout() {
+  currentUser = null; state = {};
+  document.getElementById('checklist-screen').classList.add('hidden');
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('inp-name').value = '';
+  document.getElementById('inp-id').value = '';
+}
+
+function allIds() {
+  return [...DATA.s1,...DATA.s2,...DATA.s3,...DATA.s4,...DATA.s5a,...DATA.s5b,...DATA.s5c].map(i=>i.id);
+}
+
+function updateProgress() {
+  const ids = allIds();
+  const done = ids.filter(id => state[id]).length;
+  const pct = ids.length ? Math.round(done/ids.length*100) : 0;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-text').textContent = done + ' / ' + ids.length;
+}
+
+function renderSection(containerId, items) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = items.map(item => `
+    <div class="item${state[item.id]?' done':''}" data-id="${item.id}" role="checkbox" aria-checked="${!!state[item.id]}" tabindex="0">
+      <div class="cb">${state[item.id]?CHECK_SVG:''}</div>
+      <div class="item-body">
+        <div class="item-text">${item.t}</div>
+        ${item.s?`<div class="item-sub">${item.s}</div>`:''}
+      </div>
+    </div>
+  `).join('');
+  el.querySelectorAll('.item').forEach(el => {
+    const toggle = () => {
+      const id = el.dataset.id;
+      state[id] = !state[id];
+      el.classList.toggle('done', !!state[id]);
+      el.setAttribute('aria-checked', !!state[id]);
+      el.querySelector('.cb').innerHTML = state[id] ? CHECK_SVG : '';
+      updateProgress();
+      saveState();
+    };
+    el.addEventListener('click', toggle);
+    el.addEventListener('keydown', e => { if(e.key===' '||e.key==='Enter'){e.preventDefault();toggle();} });
+  });
+}
+
+function renderAll() {
+  Object.keys(DATA).forEach(key => renderSection(key.replace('_','-')+'-items', DATA[key]));
+  // manual map
+  renderSection('s1-items', DATA.s1);
+  renderSection('s2-items', DATA.s2);
+  renderSection('s3-items', DATA.s3);
+  renderSection('s4-items', DATA.s4);
+  renderSection('s5a-items', DATA.s5a);
+  renderSection('s5b-items', DATA.s5b);
+  renderSection('s5c-items', DATA.s5c);
+  updateProgress();
+}
+
+document.getElementById('inp-id').addEventListener('keydown', e => {
+  if (e.key === 'Enter') enterChecklist();
+});
+</script>
+</body>
+</html>
